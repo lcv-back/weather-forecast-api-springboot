@@ -1,6 +1,7 @@
 package com.skyapi.weatherforecast.location;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -8,7 +9,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -52,5 +57,12 @@ public class LocationApiControllerTests {
 		String bodyContent = mapper.writeValueAsString(location);
 		
 		mockMvc.perform(post(END_POINT_PATH).contentType("application/json").content(bodyContent)).andExpect(status().isCreated()).andExpect(content().contentType("application/json")).andExpect(jsonPath("$.code", is("NYC_USA"))).andExpect(jsonPath("$.city_name", is("New York City"))).andExpect(header().string("Location", "/v1/locations/NYC_USA")).andDo(print());
+	}
+	
+	@Test
+	public void testListShouldReturn204NoContent() throws Exception {
+		Mockito.when(service.list()).thenReturn(Collections.emptyList());
+		
+		mockMvc.perform(get(END_POINT_PATH)).andExpect(status().isNoContent()).andDo(print());
 	}
 }

@@ -119,5 +119,11 @@ public class Location {
 		return Objects.equals(code, other.code);
 	}
 
+	@Override
+	public String toString() {
+		return "Location [code=" + code + ", cityName=" + cityName + ", regionName=" + regionName + ", countryName="
+				+ countryName + ", countryCode=" + countryCode + ", enabled=" + enabled + ", trashed=" + trashed + "]";
+	}
+
 	
 }

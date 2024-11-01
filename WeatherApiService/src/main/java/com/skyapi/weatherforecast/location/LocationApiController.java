@@ -1,8 +1,10 @@
 package com.skyapi.weatherforecast.location;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,5 +31,15 @@ public class LocationApiController {
 		URI uri = URI.create("/v1/locations/" + addedLocation.getCode());
 		
 		return ResponseEntity.created(uri).body(addedLocation);
+	}
+	
+	@GetMapping
+	public ResponseEntity<?> listLocations() {
+		List<Location> locations = service.list();
+		if(locations.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+		
+		return ResponseEntity.ok(locations);
 	}
 }
