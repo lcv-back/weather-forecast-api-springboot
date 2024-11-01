@@ -107,4 +107,13 @@ public class LocationApiControllerTests {
 			.andExpect(jsonPath("$[1].city_name", is("Ha Noi City")))
 			.andDo(print());
 	}
+	
+	@Test
+	public void testGetShouldReturn405MethodNotAllowed() throws Exception {
+		String requestURI = END_POINT_PATH + "/ABCDEF";
+		
+		mockMvc.perform(post(requestURI))
+			.andExpect(status().isMethodNotAllowed())
+			.andDo(print());
+	}
 }
