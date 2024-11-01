@@ -53,4 +53,13 @@ public class LocationRepositoryTests {
 		
 		assertThat(location).isNull();
 	}
+	
+	@Test
+	public void testGetFound() {
+		String code = "HaNoi_VI";
+		Location location = repository.findByCode(code);
+		
+		assertThat(location).isNotNull();
+		assertThat(location.getCode().equals(code));
+	}
 }
