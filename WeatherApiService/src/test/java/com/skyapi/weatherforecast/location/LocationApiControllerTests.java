@@ -1,7 +1,11 @@
 package com.skyapi.weatherforecast.location;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
@@ -47,6 +51,6 @@ public class LocationApiControllerTests {
 		
 		String bodyContent = mapper.writeValueAsString(location);
 		
-		mockMvc.perform(post(END_POINT_PATH).contentType("application/json").content(bodyContent)).andExpect(status().isCreated()).andDo(print());
+		mockMvc.perform(post(END_POINT_PATH).contentType("application/json").content(bodyContent)).andExpect(status().isCreated()).andExpect(content().contentType("application/json")).andExpect(jsonPath("$.code", is("NYC_USA"))).andExpect(jsonPath("$.city_name", is("New York City"))).andExpect(header().string("Location", "/v1/locations/NYC_USA")).andDo(print());
 	}
 }
