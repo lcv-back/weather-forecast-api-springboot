@@ -167,4 +167,20 @@ public class LocationApiControllerTests {
 			.andExpect(status().isNotFound())
 			.andDo(print());
 	}
+	
+	@Test
+	public void testUpdateShouldReturn400BadRequest() throws Exception {
+		Location location = new Location();
+		location.setCityName("Ha Noi City");
+		location.setCountryCode("VI");
+		location.setRegionName("Ha Noi");
+		location.setCountryName("Viet Nam");
+		location.setEnabled(true);
+		
+		String bodyContent = mapper.writeValueAsString(location);
+		
+		mockMvc.perform(put(END_POINT_PATH).contentType("application/json").content(bodyContent))
+			.andExpect(status().isBadRequest())
+			.andDo(print());
+	}
 }
