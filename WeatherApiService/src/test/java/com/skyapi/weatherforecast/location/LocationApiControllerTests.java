@@ -183,4 +183,28 @@ public class LocationApiControllerTests {
 			.andExpect(status().isBadRequest())
 			.andDo(print());
 	}
+	
+	@Test
+	public void testUpdateShouldReturn200Ok() throws Exception {
+		Location location = new Location();
+		location.setCode("NYC_USA");
+		location.setCityName("New York City");
+		location.setCountryCode("US");
+		location.setRegionName("New York");
+		location.setCountryName("United States of America");
+		location.setEnabled(true);
+		
+		Mockito.when(service.update(location)).thenReturn(location);
+		
+		String bodyContent = mapper.writeValueAsString(location);
+		
+		mockMvc.perform(put(END_POINT_PATH)
+			.contentType("application/json")
+			.content(bodyContent))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			.andExpect(jsonPath("$.code", is("NYC_USA")))
+			.andExpect(jsonPath("$.city_name", is("New York City")))
+			.andDo(print());
+	}
 }
