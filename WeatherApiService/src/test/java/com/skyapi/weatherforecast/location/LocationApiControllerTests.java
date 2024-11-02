@@ -3,6 +3,7 @@ package com.skyapi.weatherforecast.location;
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -21,7 +22,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skyapi.weatherforecast.common.Location;
 
@@ -146,6 +146,25 @@ public class LocationApiControllerTests {
 			.andExpect(content().contentType("application/json"))
 			.andExpect(jsonPath("$.code", is(code)))
 			.andExpect(jsonPath("$.city_name", is("Ha Noi City")))
+			.andDo(print());
+	}
+	
+	@Test
+	public void testUpdateShouldReturn404NotFound() throws Exception {
+		Location location = new Location();
+		location.setCode("ABCDEF");
+		location.setCityName("Ha Noi City");
+		location.setCountryCode("VI");
+		location.setRegionName("Ha Noi");
+		location.setCountryName("Viet Nam");
+		location.setEnabled(true);
+		
+		Mockito.when(service.update(location)).thenThrow(new LocationNotFoundException("No location found"));
+		
+		String bodyContent = mapper.writeValueAsString(location);
+		
+		mockMvc.perform(put(END_POINT_PATH).contentType("application/json").content(bodyContent))
+			.andExpect(status().isNotFound())
 			.andDo(print());
 	}
 }
