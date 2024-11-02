@@ -1,0 +1,218 @@
+openapi: 3.0.3
+info:
+  title: Weather Forecast APIs - SkyAPI Inc.
+  version: 1.0.0
+  description: >
+    Reference design documentation of Weather Forecast
+  termsOfService: https://skyweather.net/terms
+  contact:
+    email: vikimmich6@gmail.com
+    name: Vi Le Cong Developer
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: http://localhost:8080
+    description: for testing on local computer
+tags:
+  - name: Location
+    description: >
+      APIs for location management (cities and regions in
+      the world). Used for administrative purposes.
+
+paths:
+  /v1/locations:
+    get:
+      tags:
+        - Location
+      summary: Returns a list of managed locations - available for weather forecast
+      description: >
+        Clients use this API to get list of managed locations.
+      responses:
+        "200":
+          description: A JSON array of location objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Location"
+        "204":
+          description: No locations found
+
+    post:
+      tags:
+        - Location
+      summary: Add a new location
+      description: >
+        Clients use this API to add a new location to the system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LocationRequest"
+      responses:
+        "201":
+          description: Location created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LocationRequest"
+
+        "400":
+          description: Bad Request - Invalid location data
+
+    put:
+      tags:
+        - Location
+      summary: Update an existing location
+      description: >
+        Clients use this API to update an existing location in the system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LocationRequest"
+      responses:
+        "200":
+          description: Location updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Location"
+
+        "400":
+          description: Bad Request - Invalid location data
+
+        "404":
+          description: Location not found
+
+  /v1/locations/{code}:
+    get:
+      tags:
+        - Location
+      summary: Returns detailed information about the location with the given location code
+      parameters:
+        - in: path
+          name: code
+          schema:
+            type: string
+          required: true
+          description: The location code of the location to retrieve
+      responses:
+        "200":
+          description: A JSON object representing the location
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Location"
+        "404":
+          description: Location not found
+        "405":
+          description: Method Not Allowed
+
+components:
+  schemas:
+    Location:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Unique code representing the location
+        city_name:
+          type: string
+          description: Name of the city
+        region_name:
+          type: string
+          description: Name of the region
+        country_name:
+          type: string
+          description: Name of the country
+        country_code:
+          type: string
+          description: ISO 3166-1 alpha-2 country code
+        enabled:
+          type: boolean
+          description: Indicates whether the location is enabled for weather forecast
+        trashed:
+          type: boolean
+          description: Indicates whether the location is marked as trashed
+      example:
+        - code: HaNoi_VI
+          enabled: true
+          city_name: Ha Noi City
+          region_name: Ha Noi
+          country_name: Viet Nam
+          country_code: VI
+        - code: DELH_IN
+          enabled: true
+          city_name: New Delhi
+          region_name: Delhi
+          country_name: India
+          country_code: IN
+        - code: LOND_GB
+          enabled: true
+          city_name: London
+          region_name: England
+          country_name: United Kingdom
+          country_code: GB
+        - code: PARI_FR
+          enabled: true
+          city_name: Paris
+          region_name: Île-de-France
+          country_name: France
+          country_code: FR
+        - code: NYKN_US
+          enabled: true
+          city_name: New York City
+          region_name: New York
+          country_name: United States
+          country_code: US
+        - code: TOKY_JP
+          enabled: true
+          city_name: Tokyo
+          region_name: Kantō
+          country_name: Japan
+          country_code: JP
+
+    LocationRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Unique code representing the location
+          example: "HCMC_VN"
+        city_name:
+          type: string
+          description: Name of the city
+          example: "Ho Chi Minh City"
+        region_name:
+          type: string
+          description: Name of the region
+          example: "Ho Chi Minh City"
+        country_name:
+          type: string
+          description: Name of the country
+          example: "Viet Nam"
+        country_code:
+          type: string
+          description: ISO 3166-1 alpha-2 country code
+          example: "VN"
+        enable:
+          type: boolean
+          description: Infomation provide this code is avaiable
+          example: true
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Error code
+          example: 404
+        message:
+          type: string
+          description: Error message
+          example: "Location not found"
