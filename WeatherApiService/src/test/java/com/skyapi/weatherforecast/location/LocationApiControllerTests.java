@@ -116,4 +116,13 @@ public class LocationApiControllerTests {
 			.andExpect(status().isMethodNotAllowed())
 			.andDo(print());
 	}
+	
+	@Test
+	public void testGetShouldReturn404NotFound() throws Exception {
+		String requestURI = END_POINT_PATH + "/ABCDEF";
+		
+		mockMvc.perform(get(requestURI))
+			.andExpect(status().isNotFound())
+			.andDo(print());
+	}
 }
