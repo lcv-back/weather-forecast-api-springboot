@@ -113,6 +113,24 @@ paths:
         "405":
           description: Method Not Allowed
 
+    delete:
+      tags:
+        - Location
+      summary: Removes an existing location found by a specific code
+      description: Clients use this API to delete a specific location from database.
+      parameters:
+        - in: path
+          name: code
+          schema:
+            type: string
+          required: true
+          description: Code of the location to be deleted.
+      responses:
+        "204":
+          description: Successfully delete operation. Location removed.
+        "404":
+          description: Code not found.
+
 components:
   schemas:
     Location:
