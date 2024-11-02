@@ -125,4 +125,27 @@ public class LocationApiControllerTests {
 			.andExpect(status().isNotFound())
 			.andDo(print());
 	}
+	
+	@Test
+	public void testGetShouldReturn200Ok() throws Exception {
+		String code = "HaNoi_VI";
+		String requestURI = END_POINT_PATH + "/" + code;
+		
+		Location location = new Location();
+		location.setCode("HaNoi_VI");
+		location.setCityName("Ha Noi City");
+		location.setCountryCode("VI");
+		location.setRegionName("Ha Noi");
+		location.setCountryName("Viet Nam");
+		location.setEnabled(true);
+		
+		Mockito.when(service.get(code)).thenReturn(location);
+		
+		mockMvc.perform(get(requestURI))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			.andExpect(jsonPath("$.code", is(code)))
+			.andExpect(jsonPath("$.city_name", is("Ha Noi City")))
+			.andDo(print());
+	}
 }
