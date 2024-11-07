@@ -1,6 +1,7 @@
 package com.skyapi.weatherforecast.location;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -21,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skyapi.weatherforecast.common.Location;
@@ -206,5 +209,18 @@ public class LocationApiControllerTests {
 			.andExpect(jsonPath("$.code", is("NYC_USA")))
 			.andExpect(jsonPath("$.city_name", is("New York City")))
 			.andDo(print());
+	}
+	
+	@Test
+	public void testDeleteShouldReturn404NotFound() throws Exception {
+		String code = "NYC_USA";
+		String requestURI = END_POINT_PATH + "/" + code;
+		
+		Mockito.doThrow(LocationNotFoundException.class).when(service).delete(code);
+				
+		mockMvc.perform(delete(requestURI))
+				.andExpect(status().isNotFound())
+				.andDo(print());
+			
 	}
 }
