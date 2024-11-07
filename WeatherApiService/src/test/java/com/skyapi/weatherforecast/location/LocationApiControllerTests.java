@@ -220,7 +220,18 @@ public class LocationApiControllerTests {
 				
 		mockMvc.perform(delete(requestURI))
 				.andExpect(status().isNotFound())
-				.andDo(print());
-			
+				.andDo(print());		
+	}
+	
+	@Test
+	public void testDeleteShouldReturn204NoContent() throws Exception {
+		String code = "NYC_USA";
+		String requestURI = END_POINT_PATH + "/" + code;
+		
+		Mockito.doNothing().when(service).delete(code);
+				
+		mockMvc.perform(delete(requestURI))
+				.andExpect(status().isNoContent())
+				.andDo(print());	
 	}
 }
