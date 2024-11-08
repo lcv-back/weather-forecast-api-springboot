@@ -6,7 +6,10 @@ import org.springframework.stereotype.Service;
 
 import com.skyapi.weatherforecast.common.Location;
 
+import jakarta.transaction.Transactional;
+
 @Service
+@Transactional
 public class LocationService {
 
 	private LocationRepository repo;
