@@ -88,6 +88,18 @@ public class LocationApiControllerTests {
 	}
 	
 	@Test
+	public void testValidateRequestBodyAllFieldsInvalid() throws Exception {
+		Location location = new Location();
+		
+		String bodyContent = mapper.writeValueAsString(location);
+		
+		mockMvc.perform(post(END_POINT_PATH)
+			.contentType("application/json")
+			.content(bodyContent))
+			.andDo(print());
+	}
+	
+	@Test
 	public void testAddShouldReturn201Created() throws Exception {
 		Location location = new Location();
 		location.setCode("NYC_USA");

@@ -27,21 +27,25 @@ public class Location {
 
 	@Column(length = 128, nullable = false)
 	@JsonProperty("city_name")
-	@NotBlank(message = "Location city name cannot be left blank")
+	@NotNull(message = "Location city name cannot be null")
+	@Length(min = 3, max = 128, message = "Location city name must have 3-128 characters")
 	private String cityName;
 
 	@Column(length = 128)
+	@Length(min = 3, max = 128, message = "Location region name must have 3-128 characters")
 	@JsonProperty("region_name")
 	private String regionName;
 
 	@Column(length = 64, nullable = false)
 	@JsonProperty("country_name")
-	@NotBlank(message = "Location country name cannot be left blank")
+	@NotNull(message = "Location country name cannot be null")
+	@Length(min = 3, max = 64, message = "Location country name must have 3-64 characters")
 	private String countryName;
 
 	@Column(length = 2, nullable = false)
 	@JsonProperty("country_code")
-	@NotBlank(message = "Location country code cannot be left blank")
+	@NotNull(message = "Location country code cannot be null")
+	@Length(min = 2, max = 2, message = "Location country code must have 2 characters")
 	private String countryCode;
 
 	private boolean enabled;
