@@ -2,6 +2,8 @@ package com.skyapi.weatherforecast.common;
 
 import java.util.Objects;
 
+import org.hibernate.validator.constraints.Length;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -18,7 +20,9 @@ public class Location {
 
 	@Column(length = 12, nullable = false, unique = true)
 	@Id
-	@NotBlank(message = "Location code cannot be left blank")
+	//@NotBlank(message = "Location code cannot be left blank")
+	@NotNull(message = "Location code cannot be null")
+	@Length(min = 3, max = 12, message = "Location code must have 3-12 characters")
 	private String code;
 
 	@Column(length = 128, nullable = false)
