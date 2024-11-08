@@ -47,6 +47,28 @@ public class LocationApiControllerTests {
 	}
 	
 	@Test
+	public void testAddLocation_whenCodeIsBlank_shouldReturnValidationError() throws Exception {
+	    Location location = new Location();
+	    location.setCode(""); // Để trống để kích hoạt lỗi @NotBlank
+	    location.setCityName("New York City");
+	    location.setCountryCode("US");
+	    location.setRegionName("New York");
+	    location.setCountryName("United States of America");
+	    location.setEnabled(true);
+
+	    String bodyContent = mapper.writeValueAsString(location);
+
+	    mockMvc.perform(post(END_POINT_PATH)
+	        .contentType("application/json")
+	        .content(bodyContent))
+	        .andExpect(status().isBadRequest())
+	        .andExpect(jsonPath("$.status").value(400))
+	        .andExpect(jsonPath("$.errors[0]").value("Location code cannot be left blank")) // Kiểm tra thông báo tùy chỉnh
+	        .andDo(print());
+	}
+
+	
+	@Test
 	public void testAddShouldReturn201Created() throws Exception {
 		Location location = new Location();
 		location.setCode("NYC_USA");

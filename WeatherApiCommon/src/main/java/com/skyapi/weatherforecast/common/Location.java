@@ -18,27 +18,26 @@ public class Location {
 
 	@Column(length = 12, nullable = false, unique = true)
 	@Id
-	@NotBlank
+	@NotBlank(message = "Location code cannot be left blank")
 	private String code;
 
 	@Column(length = 128, nullable = false)
 	@JsonProperty("city_name")
-	@NotBlank
+	@NotBlank(message = "Location city name cannot be left blank")
 	private String cityName;
 
 	@Column(length = 128)
 	@JsonProperty("region_name")
-	@NotNull
 	private String regionName;
 
 	@Column(length = 64, nullable = false)
 	@JsonProperty("country_name")
-	@NotBlank
+	@NotBlank(message = "Location country name cannot be left blank")
 	private String countryName;
 
 	@Column(length = 2, nullable = false)
 	@JsonProperty("country_code")
-	@NotBlank
+	@NotBlank(message = "Location country code cannot be left blank")
 	private String countryCode;
 
 	private boolean enabled;

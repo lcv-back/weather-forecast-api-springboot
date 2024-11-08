@@ -61,11 +61,11 @@ public class LocationApiController {
 		return ResponseEntity.ok(location);
 	}
 	
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                             .body("Bad Request - Invalid location data");
-    }
+//	@ExceptionHandler(MethodArgumentNotValidException.class)
+//    public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                             .body("Bad Request - Invalid location data");
+//    }
 	
 	@PutMapping
 	public ResponseEntity<?> updateLocation(@RequestBody @Valid Location location) throws MethodArgumentNotValidException {
