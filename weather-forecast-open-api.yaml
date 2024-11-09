@@ -18,7 +18,10 @@ tags:
   - name: Location
     description: >
       APIs for location management (cities and regions in
-      the world). Used for administrative purposes.
+      the world)
+  - name: Realtime Weather
+    description: >
+      APIs for accessing and updating realtime weather data
 
 paths:
   /v1/locations:
@@ -131,6 +134,70 @@ paths:
         "404":
           description: Code not found.
 
+  /v1/realtime:
+    get:
+      tags:
+        - Realtime Weather
+      summary: Returns the current weather information
+      description: >
+        Returns the current weather information of the location based on client's IP address.
+      responses:
+        "200":
+          description: Realtime weather data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RealtimeWeather"
+
+  /v1/realtime/{code}:
+    get:
+      tags:
+        - Realtime Weather
+      summary: Get current weather data for a specific location
+      description: >
+        Returns the current weather information of a specific location identified by the given code.
+      parameters:
+        - in: path
+          name: code
+          schema:
+            type: string
+          required: true
+          description: Location code to get the weather data
+      responses:
+        "200":
+          description: Realtime weather data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RealtimeWeather"
+        "404":
+          description: Location not found
+
+    put:
+      tags:
+        - Realtime Weather
+      summary: Update realtime weather data
+      description: >
+        Updates realtime weather data based on location code.
+      parameters:
+        - in: path
+          name: code
+          schema:
+            type: string
+          required: true
+          description: Location code to update the weather data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RealtimeWeatherUpdate"
+      responses:
+        "200":
+          description: Weather data updated successfully
+        "404":
+          description: Location not found
+
 components:
   schemas:
     Location:
@@ -157,80 +224,58 @@ components:
         trashed:
           type: boolean
           description: Indicates whether the location is marked as trashed
-      example:
-        - code: HaNoi_VI
-          enabled: true
-          city_name: Ha Noi City
-          region_name: Ha Noi
-          country_name: Viet Nam
-          country_code: VI
-        - code: DELH_IN
-          enabled: true
-          city_name: New Delhi
-          region_name: Delhi
-          country_name: India
-          country_code: IN
-        - code: LOND_GB
-          enabled: true
-          city_name: London
-          region_name: England
-          country_name: United Kingdom
-          country_code: GB
-        - code: PARI_FR
-          enabled: true
-          city_name: Paris
-          region_name: Île-de-France
-          country_name: France
-          country_code: FR
-        - code: NYKN_US
-          enabled: true
-          city_name: New York City
-          region_name: New York
-          country_name: United States
-          country_code: US
-        - code: TOKY_JP
-          enabled: true
-          city_name: Tokyo
-          region_name: Kantō
-          country_name: Japan
-          country_code: JP
-
     LocationRequest:
       type: object
       properties:
         code:
           type: string
           description: Unique code representing the location
-          example: "HCMC_VN"
         city_name:
           type: string
           description: Name of the city
-          example: "Ho Chi Minh City"
         region_name:
           type: string
           description: Name of the region
-          example: "Ho Chi Minh City"
         country_name:
           type: string
           description: Name of the country
-          example: "Viet Nam"
         country_code:
           type: string
           description: ISO 3166-1 alpha-2 country code
-          example: "VN"
         enable:
           type: boolean
-          description: Infomation provide this code is avaiable
-          example: true
-
-    Error:
+          description: Whether this code is active for weather forecast
+    RealtimeWeather:
       type: object
       properties:
-        code:
-          type: integer
-          description: Error code
-          example: 404
-        message:
+        location_code:
           type: string
-          description: Error message
-          example: "Location not found"
+          description: Unique code representing the location
+        temperature:
+          type: number
+          format: float
+          description: Current temperature in Celsius
+        humidity:
+          type: number
+          format: float
+          description: Current humidity percentage
+        condition:
+          type: string
+          description: Weather condition description
+    RealtimeWeatherUpdate:
+      type: object
+      properties:
+        location_code:
+          type: string
+          description: Unique code representing the location
+        temperature:
+          type: number
+          format: float
+          description: Updated temperature in Celsius
+        humidity:
+          type: number
+          format: float
+          description: Updated humidity percentage
+        condition:
+          type: string
+          description: Updated weather condition description

@@ -1,5 +1,6 @@
 package com.skyapi.weatherforecast.location;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -90,13 +92,25 @@ public class LocationApiControllerTests {
 	@Test
 	public void testValidateRequestBodyAllFieldsInvalid() throws Exception {
 		Location location = new Location();
+		location.setRegionName("");
 		
 		String bodyContent = mapper.writeValueAsString(location);
 		
-		mockMvc.perform(post(END_POINT_PATH)
+		MvcResult mvcResult = mockMvc.perform(post(END_POINT_PATH)
 			.contentType("application/json")
 			.content(bodyContent))
-			.andDo(print());
+			.andExpect(status().isBadRequest())
+			.andExpect(content().contentType("application/json"))
+			.andDo(print())
+			.andReturn();
+		
+		String responseBody = mvcResult.getResponse().getContentAsString();
+		
+		assertThat(responseBody).contains("Location code cannot be null");
+		assertThat(responseBody).contains("Location city name cannot be null");
+		assertThat(responseBody).contains("Location region name must have 3-128 characters");
+		assertThat(responseBody).contains("Location country name cannot be null");
+		assertThat(responseBody).contains("Location country code cannot be null");
 	}
 	
 	@Test
