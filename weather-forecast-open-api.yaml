@@ -143,60 +143,89 @@ paths:
         Returns the current weather information of the location based on client's IP address.
       responses:
         "200":
-          description: Realtime weather data retrieved successfully
+          description: successful retrieval operation. Realtime data available for the client's location
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/RealtimeWeather"
+              example: # Updated example
+                location: "San Francisco, California, United States of America"
+                temperature: 12
+                humidity: 32
+                precipitation: 88
+                status: "Cloudy"
+                win_speed: 5
+                last_updated: "2024-11-09T07:14:00Z" # Using ISO 8601 format
+        "400":
+          description: bad request. Could not determine client's IP address
+        "404":
+          description: No management location found for the client's IP address
 
   /v1/realtime/{code}:
     get:
       tags:
         - Realtime Weather
-      summary: Get current weather data for a specific location
+      summary: Returns the current weather information of a specific location identified by the given code.
       description: >
-        Returns the current weather information of a specific location identified by the given code.
+        Clients use this API to get realtime weather data of a specific location by the given code
       parameters:
         - in: path
           name: code
           schema:
             type: string
+            example: HCM_VI
           required: true
           description: Location code to get the weather data
       responses:
         "200":
-          description: Realtime weather data retrieved successfully
+          description: successful retrieval operation. Realtime data available for the client's location
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/RealtimeWeather"
+              example: # Updated example
+                location: "San Francisco, California, United States of America"
+                temperature: 12
+                humidity: 32
+                precipitation: 88
+                status: "Cloudy"
+                win_speed: 5
+                last_updated: "2024-11-09T07:14:00Z" # Using ISO 8601 format
         "404":
-          description: Location not found
+          description: No managed location found the given code
 
     put:
       tags:
         - Realtime Weather
-      summary: Update realtime weather data
+      summary: Update realtime weather data based on location code
       description: >
-        Updates realtime weather data based on location code.
+        Clients use this API to get realtime weather data of a specific location by the given code
       parameters:
         - in: path
           name: code
           schema:
             type: string
+            example: HCM_VI
           required: true
           description: Location code to update the weather data
       requestBody:
         required: true
+        description: a JSON object that represents the realtime weather data that needs to be updated. Request body not included location and last updated time.
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/RealtimeWeatherUpdate"
+            example:
+              temperature: 12
+              humidity: 55
+              precipitation: 23
+              status: "Cloudy"
+              win_speed: 8
       responses:
         "200":
-          description: Weather data updated successfully
+          description: successful update operation. Realtime weather data updated successfully
         "404":
-          description: Location not found
+          description: No managed location found the given code
 
 components:
   schemas:
@@ -248,9 +277,9 @@ components:
     RealtimeWeather:
       type: object
       properties:
-        location_code:
+        location:
           type: string
-          description: Unique code representing the location
+          description: Location information (city, region, country)
         temperature:
           type: number
           format: float
@@ -259,9 +288,24 @@ components:
           type: number
           format: float
           description: Current humidity percentage
-        condition:
+        precipitation:
+          type: number
+          format: float
+          description: Current precipitation amount (you might want to specify units)
+        status:
           type: string
           description: Weather condition description
+        win_speed:
+          type: number
+          format: float
+          description: Wind speed (you might want to specify units)
+        last_updated:
+          type: string
+          format: date-time
+          pattern: yyyy-MM-dd'T'HH:mm:ss'Z'
+          description: The last time weather data is updated. Datetime format follow RFC 3339 and ISO 8601
+          example: 2024-11-10T11:09:16Z
+
     RealtimeWeatherUpdate:
       type: object
       properties:
