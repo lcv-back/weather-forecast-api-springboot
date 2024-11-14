@@ -50,4 +50,15 @@ public class RealtimeWeatherRepositoryTests {
 		
 		assertThat(realtimeWeather).isNull();
 	}
+	
+	@Test
+	public void testFindByCountryCodeAndCityFound() {
+		String countryCode = "VI";
+		String cityName = "Ho Chi Minh City";
+		
+		RealtimeWeather realtimeWeather = repo.findByCountryCodeAndCity(countryCode, cityName);
+		
+		assertThat(realtimeWeather).isNotNull();
+		cityName.equals(assertThat(realtimeWeather.getLocation().getCityName()));
+	}
 }
