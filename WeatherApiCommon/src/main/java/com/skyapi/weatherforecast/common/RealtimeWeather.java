@@ -1,6 +1,7 @@
 package com.skyapi.weatherforecast.common;
 
 import java.util.Date;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -96,4 +97,21 @@ public class RealtimeWeather {
 		this.location = location;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RealtimeWeather other = (RealtimeWeather) obj;
+		return Objects.equals(humidity, other.humidity);
+	}
+	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return super.toString();
+	}
 }
