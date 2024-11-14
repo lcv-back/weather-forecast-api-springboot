@@ -2,6 +2,7 @@ package com.skyapi.weatherforecast.location;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
 import com.skyapi.weatherforecast.common.Location;
+import com.skyapi.weatherforecast.common.RealtimeWeather;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -71,5 +73,29 @@ public class LocationRepositoryTests {
 		Location location = repository.findByCode(code);
 		
 		assertThat(location).isNull();
+	}
+	
+	@Test
+	public void testAddRealtimeWeatherData() {
+		String locationCode = "HCM_VI";
+		Location location = repository.findByCode(locationCode);
+		
+		RealtimeWeather realtimeWeather = location.getRealtimeWeather();
+		
+		if(realtimeWeather == null) {
+			realtimeWeather = new RealtimeWeather();
+			realtimeWeather.setLocation(location);
+			location.setRealtimeWeather(realtimeWeather);
+		}
+		
+		realtimeWeather.setTemperature(10);
+		realtimeWeather.setHumidity(60);
+		realtimeWeather.setPrecipitation(70);
+		realtimeWeather.setStatus("Sunny");
+		realtimeWeather.setWindSpeed(10);
+		realtimeWeather.setLastUpdated(new Date());
+		
+		Location updatedLocation = repository.save(location);
+		assertThat(updatedLocation.getRealtimeWeather().getLocationCode().equals(locationCode));
 	}
 }
