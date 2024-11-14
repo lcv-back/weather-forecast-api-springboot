@@ -26,4 +26,43 @@ public class IP2LocationTests {
 		
 		System.out.println(ipResult);
 	}
+	
+	@Test
+	public void testValidP1() throws IOException {
+		IP2Location ipLocator = new IP2Location();
+		ipLocator.Open(DBPath);
+		
+		String ipAddress = "108.30.178.78"; // New York IP
+		IPResult ipResult = ipLocator.IPQuery(ipAddress);
+		
+		assertEquals("OK", ipResult.getStatus());
+		
+		System.out.println(ipResult);
+	}
+	
+	@Test
+	public void testValidP2() throws IOException {
+		IP2Location ipLocator = new IP2Location();
+		ipLocator.Open(DBPath);
+		
+		String ipAddress = "103.48.198.141"; // India IP
+		IPResult ipResult = ipLocator.IPQuery(ipAddress);
+		
+		assertEquals("OK", ipResult.getStatus());
+		
+		System.out.println(ipResult);
+	}
+	
+	@Test
+	public void testValidP3() throws IOException {
+		IP2Location ipLocator = new IP2Location();
+		ipLocator.Open(DBPath);
+		
+		String ipAddress = "116.111.185.7"; // VietNam IP
+		IPResult ipResult = ipLocator.IPQuery(ipAddress);
+		
+		assertEquals("OK", ipResult.getStatus());
+		
+		System.out.println(ipResult);
+	}
 }
