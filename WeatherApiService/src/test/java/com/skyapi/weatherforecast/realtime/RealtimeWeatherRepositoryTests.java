@@ -40,4 +40,14 @@ public class RealtimeWeatherRepositoryTests {
 		
 		assertEquals(32, updatedRealtimeWeather.getHumidity());
 	}
+	
+	@Test
+	public void testFindByCountryCodeAndCityNotFound() {
+		String countryCode = "JP";
+		String cityName = "Tokyo";
+		
+		RealtimeWeather realtimeWeather = repo.findByCountryCodeAndCity(countryCode, cityName);
+		
+		assertThat(realtimeWeather).isNull();
+	}
 }
