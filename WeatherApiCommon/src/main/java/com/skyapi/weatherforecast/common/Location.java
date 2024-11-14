@@ -20,6 +20,16 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 @Table(name = "locations")
 public class Location {
+	
+	public Location() {}
+	
+	public Location(String cityName, String regionName, String countryName, String countryCode) {
+		super();
+		this.cityName = cityName;
+		this.regionName = regionName;
+		this.countryName = countryName;
+		this.countryCode = countryCode;
+	}
 
 	@Column(length = 12, nullable = false, unique = true)
 	@Id
@@ -146,6 +156,8 @@ public class Location {
 	public void setRealtimeWeather(RealtimeWeather realtimeWeather) {
 		this.realtimeWeather = realtimeWeather;
 	}
+
+
 
 	
 }
