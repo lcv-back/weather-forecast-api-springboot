@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skyapi.weatherforecast.GeolocationException;
 import com.skyapi.weatherforecast.GeolocationService;
+import com.skyapi.weatherforecast.common.Location;
+import com.skyapi.weatherforecast.location.LocationNotFoundException;
 
 @WebMvcTest(RealtimeWeatherApiController.class)
 public class RealtimeWeatherApiControllerTests {
@@ -32,6 +34,18 @@ public class RealtimeWeatherApiControllerTests {
 		
 		mockMvc.perform(get(END_POINT_PATH))
 			.andExpect(status().isBadRequest())
+			.andDo(print());
+	}
+	
+	@Test
+	public void testGetShouldReturnStatus404NotFound() throws Exception {
+		Location location = new Location();
+		
+		Mockito.when(locationService.getLocation(Mockito.anyString())).thenReturn(location);
+		Mockito.when(realtimeWeatherService.getByLocation(location)).thenThrow(LocationNotFoundException.class);
+		
+		mockMvc.perform(get(END_POINT_PATH))
+			.andExpect(status().isNotFound())
 			.andDo(print());
 	}
 }
