@@ -26,6 +26,7 @@ public class GeolocationService {
 	}
 	
 	public Location getLocation(String ipAddress) throws GeolocationException {
+		LOGGER.info("Getting location for IP address: " + ipAddress);
 		try {
 			IPResult ipResult = ipLocator.IPQuery(ipAddress);
 			

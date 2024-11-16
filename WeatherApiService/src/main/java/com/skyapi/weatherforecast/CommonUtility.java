@@ -10,7 +10,12 @@ public class CommonUtility {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommonUtility.class);
 	
 	public static String getIPAddress(HttpServletRequest request) {
-		String ip = request.getHeader("X-FORWARD-FOR");
+		LOGGER.info("Entering getRealtimeWeatherByIPAddress...");
+		String ip = request.getHeader("X-FORWARDED-FOR");
+		
+		LOGGER.info("Header X-FORWARDED-FOR: {}", request.getHeader("X-FORWARDED-FOR"));
+		LOGGER.info("RemoteAddr: {}", request.getRemoteAddr());
+
 		
 		if(ip == null || ip.isEmpty()) {
 			ip = request.getRemoteAddr();

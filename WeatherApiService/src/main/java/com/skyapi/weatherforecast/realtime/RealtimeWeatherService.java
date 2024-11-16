@@ -9,7 +9,7 @@ import com.skyapi.weatherforecast.location.LocationNotFoundException;
 @Service
 public class RealtimeWeatherService {
 
-	private RealtimeWeatherRepository realtimeWeatherRepo;
+	private final RealtimeWeatherRepository realtimeWeatherRepo;
 	
 	public RealtimeWeatherService(RealtimeWeatherRepository realtimeWeatherRepo) {
 		super();
@@ -17,8 +17,11 @@ public class RealtimeWeatherService {
 	}
 	
 	public RealtimeWeather getByLocation(Location location) throws LocationNotFoundException {
-		String countryCode = location.getCode();
+		String countryCode = location.getCountryCode();
 		String cityName = location.getCityName();
+		
+		System.out.println("Country Code: " + countryCode);
+	    System.out.println("City Name: " + cityName);
 		
 		RealtimeWeather realtimeWeather = realtimeWeatherRepo.findByCountryCodeAndCity(countryCode, cityName);
 		

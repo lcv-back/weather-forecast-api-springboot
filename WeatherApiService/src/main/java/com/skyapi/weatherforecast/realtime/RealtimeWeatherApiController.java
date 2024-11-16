@@ -17,36 +17,36 @@ import com.skyapi.weatherforecast.location.LocationNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/v1/realtime")
+@RequestMapping("/v1")
 public class RealtimeWeatherApiController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RealtimeWeatherApiController.class);
 
 	private GeolocationService locationService;
 	private RealtimeWeatherService realtimeWeatherService;
 	
-	public RealtimeWeatherApiController(GeolocationService locationService,
-			RealtimeWeatherService realtimeWeatherService) {
+	public RealtimeWeatherApiController(GeolocationService locationService, RealtimeWeatherService realtimeWeatherService) {
 		super();
 		this.locationService = locationService;
 		this.realtimeWeatherService = realtimeWeatherService;
 	}
 	
-	@GetMapping
+	@GetMapping("/realtime")
 	public ResponseEntity<?> getRealtimeWeatherByIPAddress(HttpServletRequest request) {
-		String ipAddress = CommonUtility.getIPAddress(request);
-		
-		try {
-			Location locationFromIp = locationService.getLocation(ipAddress);
-			RealtimeWeather realtimeWeather = realtimeWeatherService.getByLocation(locationFromIp);
-			
-			return ResponseEntity.ok(realtimeWeather);
-		} catch (GeolocationException e) {
-			LOGGER.error(e.getMessage(), e);
-			return ResponseEntity.badRequest().build();
-			
-		} catch (LocationNotFoundException e) {
-			LOGGER.error(e.getMessage(), e);
-			return ResponseEntity.notFound().build();
-		}
+	    String ipAddress = CommonUtility.getIPAddress(request);
+	    LOGGER.info("Request received at /v1/realtime from IP: {}", ipAddress);
+	    
+	    try {
+	        Location locationFromIp = locationService.getLocation(ipAddress);
+	        RealtimeWeather realtimeWeather = realtimeWeatherService.getByLocation(locationFromIp);
+	        LOGGER.info("Weather data: {}", realtimeWeather);
+	        return ResponseEntity.ok(realtimeWeather);
+	    } catch (GeolocationException e) {
+	        LOGGER.error(e.getMessage(), e);
+	        return ResponseEntity.badRequest().build();
+	    } catch (LocationNotFoundException e) {
+	        LOGGER.error(e.getMessage(), e);
+	        return ResponseEntity.notFound().build();
+	    }
 	}
+
 }
