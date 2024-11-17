@@ -1,7 +1,9 @@
 package com.skyapi.weatherforecast.realtime;
 
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,13 +25,16 @@ public class RealtimeWeatherApiController {
 
 	private GeolocationService locationService;
 	private RealtimeWeatherService realtimeWeatherService;
+	private ModelMapper modelMapper;
 	
-	public RealtimeWeatherApiController(GeolocationService locationService, RealtimeWeatherService realtimeWeatherService) {
+	public RealtimeWeatherApiController(GeolocationService locationService,
+			RealtimeWeatherService realtimeWeatherService, ModelMapper modelMapper) {
 		super();
 		this.locationService = locationService;
 		this.realtimeWeatherService = realtimeWeatherService;
+		this.modelMapper = modelMapper;
 	}
-	
+
 	@GetMapping("/realtime")
 	public ResponseEntity<?> getRealtimeWeatherByIPAddress(HttpServletRequest request) {
 	    String ipAddress = CommonUtility.getIPAddress(request);
@@ -38,8 +43,16 @@ public class RealtimeWeatherApiController {
 	    try {
 	        Location locationFromIp = locationService.getLocation(ipAddress);
 	        RealtimeWeather realtimeWeather = realtimeWeatherService.getByLocation(locationFromIp);
+	        
+	        if (realtimeWeather.getLocation() == null) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                    .body("Location not available for the requested IP address");
+	        }
+	        
+	        RealtimeWeatherDTO dto = modelMapper.map(realtimeWeather, RealtimeWeatherDTO.class);
+	        
 	        LOGGER.info("Weather data: {}", realtimeWeather);
-	        return ResponseEntity.ok(realtimeWeather);
+	        return ResponseEntity.ok(dto);
 	    } catch (GeolocationException e) {
 	        LOGGER.error(e.getMessage(), e);
 	        return ResponseEntity.badRequest().build();

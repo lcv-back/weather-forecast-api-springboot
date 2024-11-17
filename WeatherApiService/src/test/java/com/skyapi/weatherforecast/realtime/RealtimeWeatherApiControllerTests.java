@@ -1,8 +1,10 @@
 package com.skyapi.weatherforecast.realtime;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Date;
@@ -38,7 +40,7 @@ public class RealtimeWeatherApiControllerTests {
 	@Test
     public void testGetRealtimeWeatherByIPAddress() throws Exception {
         mockMvc.perform(get("/v1/realtime")
-                .header("X-FORWARDED-FOR", "116.111.185.7"))  // Thêm header X-FORWARDED-FOR vào yêu cầu
+                .header("X-FORWARDED-FOR", "103.48.198.141"))  // Thêm header X-FORWARDED-FOR vào yêu cầu
                 .andExpect(status().isOk())
                 .andDo(result -> {
                     System.out.println(result.getResponse().getContentAsString());
@@ -69,11 +71,11 @@ public class RealtimeWeatherApiControllerTests {
 	@Test
 	public void testGetShouldReturnStatus200OK() throws Exception {
 		Location location = new Location();
-		location.setCode("DELHI_IN");
-		location.setCityName("New India");
-		location.setRegionName("Delhi");
-		location.setCountryName("India");
-		location.setCountryCode("IN");
+		location.setCode("NYC_USA");
+		location.setCityName("New York City");
+		location.setRegionName("New York");
+		location.setCountryName("United States of America");
+		location.setCountryCode("US");
 		
 		RealtimeWeather realtimeWeather = new RealtimeWeather();
 		realtimeWeather.setHumidity(41);
@@ -85,13 +87,17 @@ public class RealtimeWeatherApiControllerTests {
 		realtimeWeather.setPrecipitation(73);
 
 		location.setRealtimeWeather(realtimeWeather);
+		realtimeWeather.setLocation(location);
 		
 		Mockito.when(locationService.getLocation(Mockito.anyString())).thenReturn(location);
 		Mockito.when(realtimeWeatherService.getByLocation(location)).thenReturn(realtimeWeather);
 		
+		String expectedLocation = location.getCityName() + ", " + location.getRegionName() + ", " + location.getCountryName();
+		
 		mockMvc.perform(get(END_POINT_PATH))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
+			.andExpect(jsonPath("$.location", is(expectedLocation)))
 			.andDo(print());
 	}
 }
