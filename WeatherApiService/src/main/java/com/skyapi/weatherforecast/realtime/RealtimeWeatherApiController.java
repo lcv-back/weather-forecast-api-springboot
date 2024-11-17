@@ -20,6 +20,7 @@ import com.skyapi.weatherforecast.common.RealtimeWeather;
 import com.skyapi.weatherforecast.location.LocationNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/v1")
@@ -77,7 +78,7 @@ public class RealtimeWeatherApiController {
 	
 	@PutMapping("/realtime/{locationCode}")
 	public ResponseEntity<?> updateRealtimeWeatherByLocationCode(@PathVariable("locationCode") String locationCode, 
-			@RequestBody RealtimeWeather realtimeWeatherInRequest) {
+			@RequestBody @Valid RealtimeWeather realtimeWeatherInRequest) {
 		try {
 			RealtimeWeather updateRealtimeWeather = realtimeWeatherService.update(locationCode, realtimeWeatherInRequest);
 			
