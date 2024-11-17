@@ -69,4 +69,12 @@ public class RealtimeWeatherRepositoryTests {
 		
 		assertThat(realtimeWeather).isNull();
 	}
+	
+	@Test
+	public void testFindByTrashedLocationNotFound() {
+		String locationCode = "DELHI_IN";
+		RealtimeWeather realtimeWeather = repo.findByLocationCode(locationCode);
+		
+		assertThat(realtimeWeather).isNull();
+	}
 }
