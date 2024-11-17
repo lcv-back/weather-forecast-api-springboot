@@ -191,4 +191,40 @@ public class RealtimeWeatherApiControllerTests {
 			.andExpect(status().isNotFound())
 			.andDo(print());
 	}
+	
+	@Test
+	public void testUpdateShouldReturn200Ok() throws Exception {
+		String locationCode = "NYC_USA";
+		
+		Location location = new Location();
+		location.setCode(locationCode);
+		location.setCityName("New York City");
+		location.setRegionName("New York");
+		location.setCountryName("United States of America");
+		location.setCountryCode("US");
+		
+		RealtimeWeather realtimeWeather = new RealtimeWeather();
+		realtimeWeather.setTemperature(12);
+		realtimeWeather.setHumidity(32);
+		realtimeWeather.setLastUpdated(new Date());
+		realtimeWeather.setPrecipitation(88);
+		realtimeWeather.setStatus("Cloudy");
+		realtimeWeather.setWindSpeed(100);
+		
+		realtimeWeather.setLocation(location);
+		location.setRealtimeWeather(realtimeWeather);
+		
+		Mockito.when(realtimeWeatherService.update(locationCode, realtimeWeather)).thenReturn(realtimeWeather);
+		
+		String expectedLocation = location.getCityName() + ", " + location.getRegionName() + ", " + location.getCountryName();
+		
+		String requestURI = "/v1/realtime/" + locationCode;
+		
+		String bodyContent = mapper.writeValueAsString(realtimeWeather);
+		
+		mockMvc.perform(put(requestURI).contentType("application/json").content(bodyContent))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.location", is(expectedLocation)))
+			.andDo(print());
+	}
 }

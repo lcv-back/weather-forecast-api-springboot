@@ -79,6 +79,7 @@ public class RealtimeWeatherApiController {
 	@PutMapping("/realtime/{locationCode}")
 	public ResponseEntity<?> updateRealtimeWeatherByLocationCode(@PathVariable("locationCode") String locationCode, 
 			@RequestBody @Valid RealtimeWeather realtimeWeatherInRequest) {
+		realtimeWeatherInRequest.setLocationCode(locationCode);
 		try {
 			RealtimeWeather updateRealtimeWeather = realtimeWeatherService.update(locationCode, realtimeWeatherInRequest);
 			

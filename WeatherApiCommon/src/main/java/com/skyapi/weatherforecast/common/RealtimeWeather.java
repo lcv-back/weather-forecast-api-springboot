@@ -121,6 +121,11 @@ public class RealtimeWeather {
 	}
 
 	@Override
+	public int hashCode() {
+		return Objects.hash(locationCode);
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -129,7 +134,7 @@ public class RealtimeWeather {
 		if (getClass() != obj.getClass())
 			return false;
 		RealtimeWeather other = (RealtimeWeather) obj;
-		return Objects.equals(humidity, other.humidity);
+		return Objects.equals(locationCode, other.locationCode);
 	}
 	
 	@Override
@@ -137,4 +142,6 @@ public class RealtimeWeather {
 		// TODO Auto-generated method stub
 		return super.toString();
 	}
+	
+	
 }
