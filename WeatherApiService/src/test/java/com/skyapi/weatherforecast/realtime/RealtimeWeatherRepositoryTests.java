@@ -77,4 +77,13 @@ public class RealtimeWeatherRepositoryTests {
 		
 		assertThat(realtimeWeather).isNull();
 	}
+	
+	@Test
+	public void testFindLocationFound() {
+		String locationCode = "NYC_USA";
+		RealtimeWeather realtimeWeather = repo.findByLocationCode(locationCode);
+		
+		assertThat(realtimeWeather).isNotNull();
+		assertThat(realtimeWeather.getLocationCode()).isEqualTo(locationCode);
+	}
 }
