@@ -3,7 +3,9 @@ package com.skyapi.weatherforecast.realtime;
 import java.util.Date;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 public class RealtimeWeatherDTO {
 
@@ -19,6 +21,7 @@ public class RealtimeWeatherDTO {
 	private String status;
 
 	@JsonProperty("last_updated")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
 	private Date lastUpdated;
 
 	public int getTemperature() {
