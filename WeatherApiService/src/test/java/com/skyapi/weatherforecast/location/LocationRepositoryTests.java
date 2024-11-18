@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
+import com.skyapi.weatherforecast.common.HourlyWeather;
 import com.skyapi.weatherforecast.common.Location;
 import com.skyapi.weatherforecast.common.RealtimeWeather;
 
@@ -97,5 +98,33 @@ public class LocationRepositoryTests {
 		
 		Location updatedLocation = repository.save(location);
 		assertThat(updatedLocation.getRealtimeWeather().getLocationCode().equals(locationCode));
+	}
+	
+	@Test
+	public void testAddHourlyWeatherData() {
+		String locationCode = "HCM_VI";
+		Location location = repository.findByCode(locationCode);
+		
+		List<HourlyWeather> listHourWearther = location.getListHourlyWeather();
+		
+		HourlyWeather forecast1 = new HourlyWeather()
+				.id(location, 8)
+				.temperature(20)
+				.precipitation(60)
+				.status("Cloudy");
+
+		HourlyWeather forecast2 = new HourlyWeather()
+				.location(location)
+				.hourOfDay(9)
+				.temperature(22)
+				.precipitation(77)
+				.status("Sunny");
+		
+		listHourWearther.add(forecast1);
+		listHourWearther.add(forecast2);
+		
+		Location updatedLocation = repository.save(location);
+	
+		assertThat(!updatedLocation.getListHourlyWeather().isEmpty());
 	}
 }
