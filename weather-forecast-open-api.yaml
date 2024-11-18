@@ -220,12 +220,187 @@ paths:
               humidity: 55
               precipitation: 23
               status: "Cloudy"
-              win_speed: 8
+              wind_speed: 88
       responses:
         "200":
           description: successful update operation. Realtime weather data updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RealtimeWeather"
+              example: # Updated example
+                location: "San Francisco, California, United States of America"
+                temperature: 12
+                humidity: 32
+                precipitation: 88
+                status: "Cloudy"
+                win_speed: 5
+                last_updated: "2024-11-09T07:14:00Z" # Using ISO 8601 format
         "404":
           description: No managed location found the given code
+
+  /v1/hourly:
+    get:
+      tags:
+        - Hourly Forecast
+      summary: Returns weather forecast for upcoming hours in the current day, based on client's IP address
+      description: >
+        Clients use this API to get weather forecast for upcoming hours in the current day. Location is determined automatically based on client's IP address.
+      parameters:
+        - in: header
+          name: X-Current-Hour
+          schema:
+            type: number
+            default: 7
+          required: true
+          description: The current hour at the client's location, default value is 7.
+      responses:
+        "200":
+          description: successfully retrieval operation. A json object representing hourly forecast information available for the client's location - only data for the next hours is returned (based on value of the header X-Current-Hour).
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HourlyForecast"
+              example:
+                location: "San Francisco, California, United States of America"
+                hourly_forecast:
+                  - hour_of_day: 8
+                    temperature: 12
+                    precipitation: 88
+                    status: "Cloudy"
+                  - hour_of_day: 9
+                    temperature: 13
+                    precipitation: 86
+                    status: "Cloudy"
+                  - hour_of_day: 10
+                    temperature: 15
+                    precipitation: 60
+                    status: "Sunny"
+        "400":
+          description: bad request. Could not determine client's IP address
+        "404":
+          description: No managed location found for the client's IP address
+
+  /v1/hourly/{code}:
+    get:
+      tags:
+        - Hourly Forecast
+      summary: returns hourly weather forecast information based on location code
+      description: >
+        Clients use this API to get weather forecast for upcoming hours in the current day, for the given location code, only get data for the next hours is returned (based on value of the header X-Current-Hour).
+      parameters:
+        - in: header
+          name: X-Current-Hour
+          schema:
+            type: number
+            default: 7
+          required: true
+          description: The current hour at the client's location, default value is 7.
+        - in: path
+          name: code
+          schema:
+            type: string
+            example: NYC_USA
+          required: true
+          description: Code of the location
+      responses:
+        "200":
+          description: successfully retrieval operation. A JSON object representing hourly forecast data available for the given code.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  location:
+                    type: string
+                  hourly_forecast:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        hour_of_day:
+                          type: number
+                        temperature:
+                          type: number
+                        precipitation:
+                          type: number
+                        status:
+                          type: string
+              example:
+                location: "San Francisco, California, United States of America"
+                hourly_forecast:
+                  - hour_of_day: 8
+                    temperature: 12
+                    precipitation: 88
+                    status: "Cloudy"
+                  - hour_of_day: 9
+                    temperature: 13
+                    precipitation: 86
+                    status: "Cloudy"
+                  - hour_of_day: 10
+                    temperature: 15
+                    precipitation: 60
+                    status: "Sunny"
+        "404":
+          description: No managed location found for the given location code
+
+    put:
+      tags:
+        - Hourly Forecast
+      summary: Updates hourly weather forecast hours in the current day, based on client's IP address
+      description: >
+        Clients use this API to update weather forecast for upcoming hours in the current day, for the given location code.
+      parameters:
+        - in: path
+          name: code
+          schema:
+            type: string
+            example: NYC_USA
+          required: true
+          description: Code of the location
+      requestBody:
+        required: true
+        description: >
+          a JSON object that represents the hourly weather forecast data that needs to be updated. It must be an array of hourly forecast information as shown in the below example.
+        content:
+          application/json:
+            example:
+              - hour_of_day: 8
+                temperature: 12
+                precipitation: 88
+                status: "Cloudy"
+              - hour_of_day: 9
+                temperature: 13
+                precipitation: 86
+                status: "Cloudy"
+              - hour_of_day: 10
+                temperature: 15
+                precipitation: 60
+                status: "Sunny"
+      responses:
+        "200":
+          description: successfully update operation. Hourly weather forecast data updated successfully - all previous data is replaced
+          content:
+            application/json:
+              example:
+                location: "San Francisco, California, United States of America"
+                hourly_forecast:
+                  - hour_of_day: 8
+                    temperature: 12
+                    precipitation: 88
+                    status: "Cloudy"
+                  - hour_of_day: 9
+                    temperature: 13
+                    precipitation: 86
+                    status: "Cloudy"
+                  - hour_of_day: 10
+                    temperature: 15
+                    precipitation: 60
+                    status: "Sunny"
+        "404":
+          description: No managed location found for the given code
 
 components:
   schemas:
@@ -323,3 +498,21 @@ components:
         condition:
           type: string
           description: Updated weather condition description
+
+    HourlyForecast:
+      type: object
+      properties:
+        hour_of_day:
+          type: number
+          description: Hour of the day for the forecasted data
+        temperature:
+          type: number
+          format: float
+          description: Temperature forecast for that hour in Celsius
+        precipitation:
+          type: number
+          format: float
+          description: Precipitation level forecast for that hour
+        status:
+          type: string
+          description: Weather condition description
