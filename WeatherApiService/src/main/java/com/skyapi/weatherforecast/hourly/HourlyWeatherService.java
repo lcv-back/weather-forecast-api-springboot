@@ -1,5 +1,6 @@
 package com.skyapi.weatherforecast.hourly;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -42,5 +43,9 @@ public class HourlyWeatherService {
 		}
 		
 		return hourlyWeatherRepo.findByLocationCode(locationCode, currentHour);
+	}
+	
+	public List<HourlyWeather> updateByLocationCode(String locationCode, List<HourlyWeather> hourlyForecastRequest) {
+		return Collections.emptyList();
 	}
 }
