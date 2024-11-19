@@ -111,4 +111,14 @@ public class HourlyWeatherApiControllerTests {
 			.andExpect(jsonPath("$.hourly_forecast[0].hour_of_day", is(10)))
 			.andDo(print());
 	}
+	
+	@Test
+	public void testGetByLocationCodeShouldReturn400BadRequest() throws Exception {
+		String locationCode = "NYC_USA";
+		String requestURI = END_POINT_PATH + "/" + locationCode;
+		
+		mockMvc.perform(get(requestURI))
+			.andExpect(status().isBadRequest())
+			.andDo(print());
+	}
 }
