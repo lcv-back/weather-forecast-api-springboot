@@ -3,10 +3,13 @@ package com.skyapi.weatherforecast.hourly;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class HourlyWeatherListDTO {
 
 	private String location;
 	
+	@JsonProperty("hourly_forecast")
 	private List<HourlyWeatherDTO> hourlyForecast = new ArrayList<>();
 
 	public String getLocation() {

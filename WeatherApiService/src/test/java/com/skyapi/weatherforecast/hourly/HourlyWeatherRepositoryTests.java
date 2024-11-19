@@ -27,17 +27,17 @@ public class HourlyWeatherRepositoryTests {
 	
 	@Test
 	public void testAddHourlyWeather() {
-		String locationCode = "HCM_VI";
-		int hourOfDay = 12;
+		String locationCode = "NYC_USA";
+		int hourOfDay = 8;
 		
 		Location location = new Location().code(locationCode);
 		
 		HourlyWeather forecast = new HourlyWeather()
 				.location(location)
 				.hourOfDay(hourOfDay)
-				.temperature(-12)
-				.precipitation(57)
-				.status("Cloudy");
+				.temperature(-2)
+				.precipitation(82)
+				.status("Warmup");
 	
 		HourlyWeather updatedForecast = repo.save(forecast);
 	

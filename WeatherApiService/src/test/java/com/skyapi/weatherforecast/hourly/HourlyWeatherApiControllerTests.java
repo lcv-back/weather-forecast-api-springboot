@@ -108,6 +108,7 @@ public class HourlyWeatherApiControllerTests {
 		mockMvc.perform(get(END_POINT_PATH).header(X_CURRENT_HOUR, String.valueOf(currentHour)))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.location", is(expectedLocation)))
+			.andExpect(jsonPath("$.hourly_forecast[0].hour_of_day", is(10)))
 			.andDo(print());
 	}
 }
