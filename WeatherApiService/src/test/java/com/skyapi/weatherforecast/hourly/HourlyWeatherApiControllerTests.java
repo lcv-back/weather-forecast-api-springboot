@@ -22,6 +22,7 @@ import com.skyapi.weatherforecast.GeolocationException;
 import com.skyapi.weatherforecast.GeolocationService;
 import com.skyapi.weatherforecast.common.HourlyWeather;
 import com.skyapi.weatherforecast.common.Location;
+import com.skyapi.weatherforecast.location.LocationNotFoundException;
 import com.skyapi.weatherforecast.location.LocationRepository;
 
 @SpringBootTest
@@ -119,6 +120,19 @@ public class HourlyWeatherApiControllerTests {
 		
 		mockMvc.perform(get(requestURI))
 			.andExpect(status().isBadRequest())
+			.andDo(print());
+	}
+	
+	@Test
+	public void testGetByLocationCodeShouldReturn404NotFound() throws Exception {
+		int currentHour = 10;
+		String locationCode = "NYC_USA";
+		String requestURI = END_POINT_PATH + "/" + locationCode;
+		
+		when(hourlyWeatherService.getByLocationCode(locationCode, currentHour)).thenThrow(LocationNotFoundException.class);
+		
+		mockMvc.perform(get(requestURI).header(X_CURRENT_HOUR, String.valueOf(currentHour)))
+			.andExpect(status().isNotFound())
 			.andDo(print());
 	}
 }
