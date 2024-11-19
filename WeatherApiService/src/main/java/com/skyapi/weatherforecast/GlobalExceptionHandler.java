@@ -2,6 +2,7 @@ package com.skyapi.weatherforecast;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
@@ -56,6 +59,31 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
 		error.setStatus(HttpStatus.BAD_REQUEST.value());
 		error.addError(ex.getMessage());
 		error.setPath(request.getServletPath());
+		
+		LOGGER.error(ex.getMessage(), ex);
+		
+		return error;
+	}
+	
+	@ExceptionHandler(ConstraintViolationException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorDTO handleConstraintViolationException(HttpServletRequest request, Exception ex) {
+
+		ErrorDTO error = new ErrorDTO();
+		
+		ConstraintViolationException violationException = (ConstraintViolationException) ex;
+		
+		error.setTimestamp(new Date());
+		error.setStatus(HttpStatus.BAD_REQUEST.value());
+		error.addError(ex.getMessage());
+		error.setPath(request.getServletPath());
+		
+		var constraintViolations = violationException.getConstraintViolations();
+		
+		constraintViolations.forEach(constraint -> {
+			error.addError(constraint.getPropertyPath() + ": " + constraint.getMessage());
+		});
 		
 		LOGGER.error(ex.getMessage(), ex);
 		
