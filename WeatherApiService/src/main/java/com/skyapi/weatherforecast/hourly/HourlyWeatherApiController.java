@@ -99,7 +99,13 @@ public class HourlyWeatherApiController {
 		
 		listHourlyWeather.forEach(System.out::println);
 		
-		return ResponseEntity.accepted().build();
+		try {
+			List<HourlyWeather> updateHourlyWeather = hourlyWeatherService.updateByLocationCode(locationCode, listHourlyWeather);
+		
+			return ResponseEntity.ok(listEntityToDTO(updateHourlyWeather));
+		} catch (Exception e) {
+			return ResponseEntity.notFound().build();
+		}
 	}
 	
 	private List<HourlyWeather> listDTOToListEntity(List<HourlyWeatherDTO> listDTO) {
