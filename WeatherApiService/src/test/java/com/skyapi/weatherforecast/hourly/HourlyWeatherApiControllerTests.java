@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -133,6 +135,19 @@ public class HourlyWeatherApiControllerTests {
 		
 		mockMvc.perform(get(requestURI).header(X_CURRENT_HOUR, String.valueOf(currentHour)))
 			.andExpect(status().isNotFound())
+			.andDo(print());
+	}
+	
+	@Test
+	public void testGetByLocationCodeShouldReturn204NoContent() throws Exception {
+		int currentHour = 10;
+		String locationCode = "NYC_USA";
+		String requestURI = END_POINT_PATH + "/" + locationCode;
+		
+		when(hourlyWeatherService.getByLocationCode(locationCode, currentHour)).thenReturn(Collections.emptyList());
+		
+		mockMvc.perform(get(requestURI).header(X_CURRENT_HOUR, String.valueOf(currentHour)))
+			.andExpect(status().isNoContent())
 			.andDo(print());
 	}
 }
