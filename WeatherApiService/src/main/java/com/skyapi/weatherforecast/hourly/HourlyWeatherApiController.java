@@ -2,6 +2,7 @@ package com.skyapi.weatherforecast.hourly;
 
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,12 +24,16 @@ public class HourlyWeatherApiController {
 	private HourlyWeatherService hourlyWeatherService;
 	private GeolocationService locationService;
 	
-	public HourlyWeatherApiController(HourlyWeatherService hourlyWeatherService, GeolocationService locationService) {
+	private ModelMapper modelMapper;
+	
+	public HourlyWeatherApiController(HourlyWeatherService hourlyWeatherService, GeolocationService locationService,
+			ModelMapper modelMapper) {
 		super();
 		this.hourlyWeatherService = hourlyWeatherService;
 		this.locationService = locationService;
+		this.modelMapper = modelMapper;
 	}
-	
+
 	@GetMapping
 	public ResponseEntity<?> listHourlyForecastByIPAddress(HttpServletRequest request) {
 		String ipAddress = CommonUtility.getIPAddress(request);
@@ -43,11 +48,25 @@ public class HourlyWeatherApiController {
 				return ResponseEntity.noContent().build();
 			}
 			
-			return ResponseEntity.ok(hourlyWeather);
+			return ResponseEntity.ok(listEntityToDTO(hourlyWeather));
 		} catch (NumberFormatException | GeolocationException ex) {
 			return ResponseEntity.badRequest().build();
 		} catch (LocationNotFoundException ex) {
 			return ResponseEntity.notFound().build();
 		}
+	}
+	
+	private HourlyWeatherListDTO listEntityToDTO(List<HourlyWeather> hourlyForecast) {
+		Location location = hourlyForecast.get(0).getId().getLocation();
+		
+		HourlyWeatherListDTO listDTO = new HourlyWeatherListDTO();
+		listDTO.setLocation(location.toString());
+		
+		hourlyForecast.forEach(hourlyWeather -> {
+			HourlyWeatherDTO dto = modelMapper.map(hourlyWeather, HourlyWeatherDTO.class);
+			listDTO.addHourlyWeatherDTO(dto);
+		});
+		
+		return listDTO;
 	}
 }
