@@ -37,32 +37,18 @@ public class Location {
 
 	@Column(length = 12, nullable = false, unique = true)
 	@Id
-	//@NotBlank(message = "Location code cannot be left blank")
-	@NotNull(message = "Location code cannot be null")
-	@Length(min = 3, max = 12, message = "Location code must have 3-12 characters")
 	private String code;
 
 	@Column(length = 128, nullable = false)
-	@JsonProperty("city_name")
-	@NotNull(message = "Location city name cannot be null")
-	@Length(min = 3, max = 128, message = "Location city name must have 3-128 characters")
 	private String cityName;
 
 	@Column(length = 128)
-	@Length(min = 3, max = 128, message = "Location region name must have 3-128 characters")
-	@JsonProperty("region_name")
 	private String regionName;
 
 	@Column(length = 64, nullable = false)
-	@JsonProperty("country_name")
-	@NotNull(message = "Location country name cannot be null")
-	@Length(min = 3, max = 64, message = "Location country name must have 3-64 characters")
 	private String countryName;
 
 	@Column(length = 2, nullable = false)
-	@JsonProperty("country_code")
-	@NotNull(message = "Location country code cannot be null")
-	@Length(min = 2, max = 2, message = "Location country code must have 2 characters")
 	private String countryCode;
 
 	private boolean enabled;
@@ -70,9 +56,8 @@ public class Location {
 	@JsonIgnore
 	private boolean trashed;
 	
-	@OneToOne(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(mappedBy = "location", cascade = CascadeType.ALL)
 	@PrimaryKeyJoinColumn
-	@JsonIgnore
 	private RealtimeWeather realtimeWeather;
 	
 	@OneToMany(mappedBy = "id.location", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)

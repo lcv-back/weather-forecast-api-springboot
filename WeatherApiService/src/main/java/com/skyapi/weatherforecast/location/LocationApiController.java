@@ -2,7 +2,10 @@ package com.skyapi.weatherforecast.location;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -26,18 +29,22 @@ import jakarta.validation.Valid;
 public class LocationApiController {
 
 	private LocationService service;
+	
+	@Autowired
+	private ModelMapper modelMapper;
 
-	public LocationApiController(LocationService service) {
+	public LocationApiController(LocationService service, ModelMapper modelMapper) {
 		super();
 		this.service = service;
+		this.modelMapper = modelMapper;
 	}
 	
 	@PostMapping
-	public ResponseEntity<Location> addLocation(@RequestBody @Valid Location location) {	
-		Location addedLocation = service.add(location);
+	public ResponseEntity<LocationDTO> addLocation(@RequestBody @Valid LocationDTO dto) {	
+		Location addedLocation = service.add(dtoToEntity(dto));
 		URI uri = URI.create("/v1/locations/" + addedLocation.getCode());
 		
-		return ResponseEntity.created(uri).body(addedLocation);
+		return ResponseEntity.created(uri).body(entityToDTO(addedLocation));
 	}
 	
 	@GetMapping
@@ -47,7 +54,7 @@ public class LocationApiController {
 			return ResponseEntity.noContent().build();
 		}
 		
-		return ResponseEntity.ok(locations);
+		return ResponseEntity.ok(listEntityToListDTO(locations));
 	}
 	
 	@GetMapping("/{code}")
@@ -58,19 +65,17 @@ public class LocationApiController {
 			return ResponseEntity.notFound().build();
 		}
 			
-		return ResponseEntity.ok(location);
+		return ResponseEntity.ok(entityToDTO(location));
 	}
 	
 	@PutMapping
-	public ResponseEntity<?> updateLocation(@RequestBody @Valid Location location) throws MethodArgumentNotValidException {
+	public ResponseEntity<?> updateLocation(@RequestBody @Valid LocationDTO dto) throws MethodArgumentNotValidException {
 		try {
-			Location updatedLocation = service.update(location);
+			Location updatedLocation = service.update(dtoToEntity(dto));
 			
-			return ResponseEntity.ok()
-					.header("Message", "Location updated successfully")
-					.body(updatedLocation);
+			return ResponseEntity.ok(entityToDTO(updatedLocation));
 		} catch (LocationNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Code not found.");
+			return ResponseEntity.notFound().build();
 		}
 	}
 	
@@ -78,12 +83,21 @@ public class LocationApiController {
 	public ResponseEntity<String> deleteLocation(@PathVariable("code") String code) {
 	    try {
 	        service.delete(code);
-	        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-	        		.header("Message", "Successfully delete operation. Location removed.")
-	        		.build();
-	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Code not found.");
+	        return ResponseEntity.noContent().build();
+	    } catch (LocationNotFoundException ex) {
+	        return ResponseEntity.notFound().build();
 	    }
 	}
 
-}
+	private LocationDTO entityToDTO(Location entity) {
+		return modelMapper.map(entity, LocationDTO.class);
+	}
+	
+	private Location dtoToEntity(LocationDTO dto) {
+		return modelMapper.map(dto, Location.class);
+	}
+	
+	private List<LocationDTO> listEntityToListDTO(List<Location> listEntity) {
+		return listEntity.stream().map(entity -> entityToDTO(entity)).collect(Collectors.toList());
+	}
+} 

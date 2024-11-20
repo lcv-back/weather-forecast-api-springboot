@@ -4,9 +4,12 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
 import com.skyapi.weatherforecast.common.HourlyWeather;
 import com.skyapi.weatherforecast.common.HourlyWeatherId;
 
+@Repository
 public interface HourlyWeatherRepository extends CrudRepository<HourlyWeather, HourlyWeatherId>{
 
 	@Query("""

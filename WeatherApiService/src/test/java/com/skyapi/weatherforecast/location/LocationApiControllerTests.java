@@ -12,23 +12,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skyapi.weatherforecast.common.Location;
+import com.skyapi.weatherforecast.hourly.HourlyWeatherRepository;
 
 @WebMvcTest(LocationApiController.class)
 public class LocationApiControllerTests {
@@ -39,18 +36,24 @@ public class LocationApiControllerTests {
 	@Autowired ObjectMapper mapper;
 	@MockBean LocationService service;
 	
+	@MockBean
+	private HourlyWeatherRepository hourlyWeatherRepository;
+	
 	@Test
 	public void testAddShouldReturn400BadRequest() throws Exception {
-		Location location = new Location();
+		LocationDTO location = new LocationDTO();
 		
 		String bodyContent = mapper.writeValueAsString(location);
 		
-		mockMvc.perform(post(END_POINT_PATH).contentType("application/json").content(bodyContent)).andExpect(status().isBadRequest()).andDo(print());
+		mockMvc.perform(post(END_POINT_PATH)
+			.contentType("application/json").content(bodyContent))
+			.andExpect(status().isBadRequest())
+			.andDo(print());
 	}
 	
 	@Test
 	public void testValidateRequestBodyLocationCodeNotNull() throws Exception {
-		Location location = new Location();
+		LocationDTO location = new LocationDTO();
 		location.setCityName("New York City");
 		location.setCountryCode("US");
 		location.setRegionName("New York");
@@ -64,13 +67,13 @@ public class LocationApiControllerTests {
 			.content(bodyContent))
 			.andExpect(status().isBadRequest())
 			.andExpect(content().contentType("application/json"))
-			.andExpect(jsonPath("$.errors[0]", is("Location code cannot be null")))
+			.andExpect(jsonPath("$.errors[?(@ == 'Location code cannot be null')]").exists())
 			.andDo(print());
 	}
 	
 	@Test
 	public void testValidateRequestBodyLocationCodeLength() throws Exception {
-		Location location = new Location();
+		LocationDTO location = new LocationDTO();
 		location.setCode("");
 		location.setCityName("New York City");
 		location.setCountryCode("US");
@@ -85,13 +88,13 @@ public class LocationApiControllerTests {
 			.content(bodyContent))
 			.andExpect(status().isBadRequest())
 			.andExpect(content().contentType("application/json"))
-			.andExpect(jsonPath("$.errors[0]", is("Location code must have 3-12 characters")))
+			.andExpect(jsonPath("$.errors[?(@ == 'Location code must have 3-12 characters')]").exists())
 			.andDo(print());
 	}
 	
 	@Test
 	public void testValidateRequestBodyAllFieldsInvalid() throws Exception {
-		Location location = new Location();
+		LocationDTO location = new LocationDTO();
 		location.setRegionName("");
 		
 		String bodyContent = mapper.writeValueAsString(location);
@@ -123,9 +126,17 @@ public class LocationApiControllerTests {
 		location.setCountryName("United States of America");
 		location.setEnabled(true);
 		
+		LocationDTO dto = new LocationDTO();
+		dto.setCode(location.getCode());
+		dto.setCityName(location.getCityName());
+		dto.setCountryCode(location.getCountryCode());
+		dto.setCountryName(location.getCountryName());
+		dto.setRegionName(location.getRegionName());
+		dto.setEnabled(location.isEnabled());
+		
 		Mockito.when(service.add(location)).thenReturn(location);
 		
-		String bodyContent = mapper.writeValueAsString(location);
+		String bodyContent = mapper.writeValueAsString(dto);
 		
 		mockMvc.perform(post(END_POINT_PATH)
 			.contentType("application/json")
@@ -221,7 +232,7 @@ public class LocationApiControllerTests {
 	
 	@Test
 	public void testUpdateShouldReturn404NotFound() throws Exception {
-		Location location = new Location();
+		LocationDTO location = new LocationDTO();
 		location.setCode("ABCDEF");
 		location.setCityName("Ha Noi City");
 		location.setCountryCode("VI");
@@ -229,7 +240,7 @@ public class LocationApiControllerTests {
 		location.setCountryName("Viet Nam");
 		location.setEnabled(true);
 		
-		Mockito.when(service.update(location)).thenThrow(new LocationNotFoundException("No location found"));
+		Mockito.when(service.update(Mockito.any())).thenThrow(new LocationNotFoundException("No location found"));
 		
 		String bodyContent = mapper.writeValueAsString(location);
 		
@@ -240,7 +251,7 @@ public class LocationApiControllerTests {
 	
 	@Test
 	public void testUpdateShouldReturn400BadRequest() throws Exception {
-		Location location = new Location();
+		LocationDTO location = new LocationDTO();
 		location.setCityName("Ha Noi City");
 		location.setCountryCode("VI");
 		location.setRegionName("Ha Noi");
@@ -264,9 +275,17 @@ public class LocationApiControllerTests {
 		location.setCountryName("United States of America");
 		location.setEnabled(true);
 		
+		LocationDTO dto = new LocationDTO();
+		dto.setCode(location.getCode());
+		dto.setCityName(location.getCityName());
+		dto.setCountryCode(location.getCountryCode());
+		dto.setCountryName(location.getCountryName());
+		dto.setRegionName(location.getRegionName());
+		dto.setEnabled(location.isEnabled());
+		
 		Mockito.when(service.update(location)).thenReturn(location);
 		
-		String bodyContent = mapper.writeValueAsString(location);
+		String bodyContent = mapper.writeValueAsString(dto);
 		
 		mockMvc.perform(put(END_POINT_PATH)
 			.contentType("application/json")

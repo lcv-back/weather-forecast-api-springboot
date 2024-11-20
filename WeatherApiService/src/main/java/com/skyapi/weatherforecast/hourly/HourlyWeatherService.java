@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.skyapi.weatherforecast.common.HourlyWeather;
@@ -17,6 +18,7 @@ public class HourlyWeatherService {
 	private HourlyWeatherRepository hourlyWeatherRepo;
 	private LocationRepository locationRepo;
 	
+	@Autowired
 	public HourlyWeatherService(HourlyWeatherRepository hourlyWeatherRepo, LocationRepository locationRepo) {
 		super();
 		this.hourlyWeatherRepo = hourlyWeatherRepo;
