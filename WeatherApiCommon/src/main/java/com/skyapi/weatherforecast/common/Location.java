@@ -70,12 +70,12 @@ public class Location {
 	@JsonIgnore
 	private boolean trashed;
 	
-	@OneToOne(mappedBy = "location", cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
 	@PrimaryKeyJoinColumn
 	@JsonIgnore
 	private RealtimeWeather realtimeWeather;
 	
-	@OneToMany(mappedBy = "id.location", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "id.location", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	private List<HourlyWeather> listHourlyWeather = new ArrayList<>();
 
 	public String getCode() {
