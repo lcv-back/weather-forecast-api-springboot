@@ -1,0 +1,16 @@
+<div class="container mt-4">
+    <h2>Hourly Forecast</h2>
+    <form id="hourly-form" class="form-inline">
+        <input type="text" id="location-code" class="form-control" placeholder="Enter Location Code">
+        <button type="button" id="fetch-hourly" class="btn btn-primary ml-2">Fetch</button>
+    </form>
+    <div id="hourly-result" class="mt-4">
+        <!-- Dữ liệu thời tiết hàng giờ sẽ hiển thị tại đây -->
+    </div>
+</div>
+<script>
+    $("#fetch-hourly").click(function() {
+        const code = $("#location-code").val();
+        fetchHourlyForecast(code); // Gọi hàm từ api.js
+    });
+</script>

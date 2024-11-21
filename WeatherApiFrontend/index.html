@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyAPI Weather Dashboard</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .hero {
+            background: url('assets/images/hero-bg.jpg') no-repeat center center/cover;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: black;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            color: blue;
+        }
+        
+        .about-section {
+            text-align: center;
+            padding: 50px 20px;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .about-section h2 {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card {
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">SkyAPI Weather</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="views/locations.html">Locations</a></li>
+                    <li class="nav-item"><a class="nav-link" href="views/realtime.html">Realtime Weather</a></li>
+                    <li class="nav-item"><a class="nav-link" href="views/hourly.html">Hourly Forecast</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="container">
+        <div class="hero">
+            <h1>Welcome to SkyAPI Weather Dashboard</h1>
+            <p>Your go-to solution for accurate weather data and forecasts.</p>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="container">
+        <div class="about-section">
+            <h2>About SkyAPI</h2>
+            <p>
+                SkyAPI Weather Dashboard is your comprehensive tool for managing and accessing weather data in real-time. Our platform provides detailed weather updates, forecasts, and the ability to manage locations effectively. Whether you're planning your day or monitoring
+                weather trends, SkyAPI has got you covered.
+            </p>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="card feature-card p-4">
+                    <h5 class="card-title">Manage Locations</h5>
+                    <p>Seamlessly add, update, and delete locations in your dashboard.</p>
+                    <a href="views/locations.html" class="btn btn-outline-primary">View Locations</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card p-4">
+                    <h5 class="card-title">Realtime Weather</h5>
+                    <p>Get instant weather updates for any city in the world.</p>
+                    <a href="views/realtime.html" class="btn btn-outline-primary">Realtime Updates</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card p-4">
+                    <h5 class="card-title">Hourly Forecast</h5>
+                    <p>Plan your day with accurate hourly weather predictions.</p>
+                    <a href="views/hourly.html" class="btn btn-outline-primary">View Forecast</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
