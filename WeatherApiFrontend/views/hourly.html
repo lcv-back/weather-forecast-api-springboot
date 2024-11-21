@@ -1,16 +1,278 @@
-<div class="container mt-4">
-    <h2>Hourly Forecast</h2>
-    <form id="hourly-form" class="form-inline">
-        <input type="text" id="location-code" class="form-control" placeholder="Enter Location Code">
-        <button type="button" id="fetch-hourly" class="btn btn-primary ml-2">Fetch</button>
-    </form>
-    <div id="hourly-result" class="mt-4">
-        <!-- Dữ liệu thời tiết hàng giờ sẽ hiển thị tại đây -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hourly Forecast - SkyAPI Weather Dashboard</title>
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .header {
+            margin: 30px 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        .action-card {
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .action-card i {
+            font-size: 2.5rem;
+            color: #007bff;
+        }
+        
+        .action-card h5 {
+            margin-top: 15px;
+            font-size: 1.25rem;
+            font-weight: bold;
+            flex: 1;
+            /* Chia đều không gian */
+            margin: 10px;
+            padding: 20px;
+        }
+        
+        .table-container {
+            margin-top: 30px;
+        }
+        
+        .btn-back {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            color: black;
+            border: 2px solid black;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.25rem;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back:hover {
+            background-color: black;
+            color: white;
+        }
+        /* Popup styles */
+        
+        .popup-content {
+            padding: 10px;
+            position: relative;
+        }
+        
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 5px;
+            background-color: green;
+            /* Màu xanh */
+            width: 100%;
+            /* Bắt đầu đầy đủ chiều ngang */
+            transition: width 5s linear;
+            /* Hiệu ứng giảm dần */
+        }
+        
+        .modal-dialog {
+            max-width: 900px;
+            /* Tăng chiều ngang của modal */
+            margin: 1.75rem auto;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+            /* Thêm khoảng cách giữa các phần tử */
+        }
+        
+        .table-sm th,
+        .table-sm td {
+            padding: 10px;
+            /* Tăng khoảng cách giữa các ô trong bảng */
+            font-size: 0.95rem;
+            /* Kích thước chữ thân thiện hơn */
+        }
+        
+        .table-sm th {
+            background-color: #f8f9fa;
+            /* Tô màu nền header của bảng */
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">SkyAPI Weather</a>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="container header">
+        <!-- Nút quay về -->
+        <a href="../index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+        <h1>Hourly Forecast</h1>
+        <p>Select an action to manage hourly forecast data effectively.</p>
     </div>
-</div>
-<script>
-    $("#fetch-hourly").click(function() {
-        const code = $("#location-code").val();
-        fetchHourlyForecast(code); // Gọi hàm từ api.js
-    });
-</script>
+
+    <!-- Action Cards Row -->
+    <div class="container">
+        <div class="row text-center justify-content-center">
+            <div class="col-md-3">
+                <div class="action-card" id="get-hourly-by-ip-card">
+                    <i class="fa-solid fa-globe"></i>
+                    <h5>Get Hourly Forecast by IP</h5>
+                    <p>Retrieve hourly forecast data based on your IP address and current hour.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="action-card" id="get-hourly-by-code-card">
+                    <i class="fa-solid fa-map-marker-alt"></i>
+                    <h5>Get Hourly Forecast by Code</h5>
+                    <p>Retrieve hourly forecast data of a specific location by code.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="action-card" id="update-hourly-card">
+                    <i class="fa-solid fa-sync-alt"></i>
+                    <h5>Update Hourly Forecast</h5>
+                    <p>Update hourly forecast data for a specific location.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hourly Forecast Table -->
+    <div class="container table-container">
+        <h3>Hourly Forecast Data</h3>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Location</th>
+                    <th>Hour</th>
+                    <th>Temperature (°C)</th>
+                    <th>Precipitation (%)</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="hourly-list">
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal for Update Hourly Forecast -->
+    <div id="hourly-modal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Hourly Forecast</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="hourly-form">
+                        <!-- Location Code -->
+                        <div class="mb-3">
+                            <label for="location-code" class="form-label">Location Code</label>
+                            <input type="text" id="location-code" class="form-control" placeholder="Enter location code" required>
+                        </div>
+
+                        <!-- Hourly Data Inputs -->
+                        <div class="mb-3">
+                            <label class="form-label">Hourly Data</label>
+                            <div class="row g-2">
+                                <div class="col-lg-3 col-md-6">
+                                    <input type="number" class="form-control" id="hour-of-day" placeholder="Hour (0-23)" min="0" max="23" required>
+                                </div>
+                                <div class="col-lg-3 col-md-6">
+                                    <input type="number" class="form-control" id="temperature" placeholder="Temperature (°C)" required>
+                                </div>
+                                <div class="col-lg-3 col-md-6">
+                                    <input type="number" class="form-control" id="precipitation" placeholder="Precipitation (%)" min="0" max="100" required>
+                                </div>
+                                <div class="col-lg-3 col-md-6">
+                                    <input type="text" class="form-control" id="status" placeholder="Status (e.g., Sunny)" required>
+                                </div>
+                            </div>
+                            <button type="button" id="add-hourly-data" class="btn btn-outline-primary mt-2">Add Hourly Data</button>
+                        </div>
+
+                        <!-- Hourly Data Table -->
+                        <div class="mb-3">
+                            <label class="form-label">Preview Hourly Data</label>
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Hour</th>
+                                        <th>Temperature (°C)</th>
+                                        <th>Precipitation (%)</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hourly-preview">
+                                    <!-- Hourly rows will be added here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Notification Popup -->
+    <div id="notification-popup" style="display: none; position: fixed; bottom: 20px; left: 20px; width: 250px; background: white; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+        <div class="popup-content">
+            <p id="notification-message" style="margin: 10px 15px;"></p>
+            <!-- Progress bar for timeout -->
+            <div class="progress-bar" style="height: 5px; background-color: green; width: 100%; transition: width 5s linear;"></div>
+        </div>
+    </div>
+
+
+
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/hourly.js"></script>
+</body>
+
+</html>

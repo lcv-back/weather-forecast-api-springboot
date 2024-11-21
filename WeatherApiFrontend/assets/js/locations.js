@@ -1,4 +1,79 @@
-import { fetchLocations, addLocation, updateLocation, deleteLocation } from "./api.js";
+const API_BASE_URL = "http://localhost:8080/v1/locations";
+
+// Fetch all locations
+const fetchLocations = async() => {
+    try {
+        const response = await fetch(API_BASE_URL);
+        if (!response.ok) {
+            throw new Error("Failed to fetch locations");
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching locations:", error);
+        throw error;
+    }
+};
+
+// Add a new location
+const addLocation = async(locationData) => {
+    try {
+        const response = await fetch(API_BASE_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(locationData),
+        });
+        if (!response.ok) {
+            throw new Error("Failed to add location");
+        }
+        await response.json();
+        showNotification("Location added successfully!", true); // Success message
+        renderLocations(); // Refresh table
+    } catch (error) {
+        console.error("Error adding location:", error); // Thông báo lỗi qua console
+        showNotification("Failed to add location. Please try again.", false); // Failure message
+    }
+};
+
+
+
+// Update an existing location
+const updateLocation = async(code, locationData) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/${code}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(locationData),
+        });
+        if (!response.ok) {
+            throw new Error("Failed to update location");
+        }
+        await response.json();
+        showNotification("Location updated successfully!", true); // Success message
+        renderLocations(); // Refresh table
+    } catch (error) {
+        console.error("Error updating location:", error);
+        showNotification("Failed to update location. Please try again.", false); // Failure message
+    }
+};
+
+
+// Delete a location
+const deleteLocation = async(code) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/${code}`, {
+            method: "DELETE",
+        });
+        if (!response.ok) {
+            throw new Error("Failed to delete location");
+        }
+        showNotification("Location deleted successfully!", true); // Sử dụng popup thông báo
+        renderLocations(); // Làm mới bảng
+    } catch (error) {
+        showNotification("Failed to delete location. Please try again.", false); // Sử dụng popup thông báo lỗi
+    }
+};
+
+
 
 // Render locations in the table
 const renderLocations = async() => {
@@ -24,7 +99,7 @@ const renderLocations = async() => {
             .join("");
         attachEventListeners();
     } catch (error) {
-        alert("Failed to load locations. Please try again.");
+        showNotification("Failed to load locations. Please try again.", false);
     }
 };
 
@@ -68,6 +143,7 @@ const handleEdit = async(event) => {
         }
     } catch (error) {
         alert("Failed to load location details.");
+
     }
 };
 
@@ -77,10 +153,10 @@ const handleDelete = async(event) => {
     if (confirm("Are you sure you want to delete this location?")) {
         try {
             await deleteLocation(code);
-            alert("Location deleted successfully.");
+            showNotification("Location deleted successfully.", true);
             renderLocations();
         } catch (error) {
-            alert("Failed to delete location.");
+            showNotification("Failed to delete location.", false);
         }
     }
 };
@@ -101,20 +177,46 @@ document.getElementById("location-form").addEventListener("submit", async(event)
         if (document.getElementById("location-code").disabled) {
             // Update location
             await updateLocation(locationData.code, locationData);
-            alert("Location updated successfully.");
         } else {
             // Add location
             await addLocation(locationData);
-            alert("Location added successfully.");
         }
 
         const locationModal = bootstrap.Modal.getInstance(document.getElementById("location-modal"));
         locationModal.hide();
         renderLocations();
     } catch (error) {
-        alert("Failed to save location. Please try again.");
+        showNotification("Failed to save location. Please try again.", false);
     }
 });
+
+// Function to show notification
+const showNotification = (message, isSuccess) => {
+    const popup = document.getElementById("notification-popup");
+    const popupContent = popup.querySelector(".popup-content");
+    const messageElement = document.getElementById("notification-message");
+    const progressBar = popup.querySelector(".progress-bar");
+
+    // Set message and style
+    messageElement.textContent = message;
+    popupContent.className = "popup-content"; // Reset classes
+    if (isSuccess) {
+        popupContent.classList.add("popup-success");
+        progressBar.style.backgroundColor = "#28a745"; // Green for success
+    } else {
+        popupContent.classList.add("popup-failure");
+        progressBar.style.backgroundColor = "#dc3545"; // Red for failure
+    }
+
+    // Show the popup
+    popup.style.display = "block";
+
+    // Hide after 5 seconds
+    setTimeout(() => {
+        popup.style.display = "none";
+    }, 5000);
+};
+
 
 // Handle Get Locations
 document.getElementById("get-location-card").addEventListener("click", () => {

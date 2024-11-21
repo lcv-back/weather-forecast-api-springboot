@@ -98,6 +98,56 @@
             background-color: black;
             color: white;
         }
+        /* Popup container */
+        
+        .notification-popup {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 9999;
+            display: none;
+            width: 300px;
+        }
+        /* Popup content */
+        
+        .popup-content {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 10px 20px;
+            border-left: 5px solid;
+            position: relative;
+        }
+        /* Success styles */
+        
+        .popup-success {
+            border-color: #28a745;
+        }
+        /* Failure styles */
+        
+        .popup-failure {
+            border-color: #dc3545;
+        }
+        /* Progress bar */
+        
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background-color: currentColor;
+            animation: progress 5s linear;
+        }
+        /* Animation for progress bar */
+        
+        @keyframes progress {
+            from {
+                width: 100%;
+            }
+            to {
+                width: 0;
+            }
+        }
     </style>
 </head>
 
@@ -170,6 +220,14 @@
         </table>
     </div>
 
+    <div id="notification-popup" class="notification-popup">
+        <div class="popup-content">
+            <p id="notification-message"></p>
+            <div class="progress-bar"></div>
+        </div>
+    </div>
+
+
     <!-- Modal for Add/Edit Location -->
     <div id="location-modal" class="modal fade" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
@@ -209,7 +267,6 @@
 
     <script type="module" src="../assets/js/jquery.min.js"></script>
     <script type="module" src="../assets/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="../assets/js/api.js"></script>
     <script type="module" src="../assets/js/locations.js"></script>
 </body>
 
