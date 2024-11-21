@@ -38,6 +38,7 @@ public class LocationApiControllerTests {
 	
 	@MockBean
 	private HourlyWeatherRepository hourlyWeatherRepository;
+
 	
 	@Test
 	public void testAddShouldReturn400BadRequest() throws Exception {
@@ -200,10 +201,16 @@ public class LocationApiControllerTests {
 	
 	@Test
 	public void testGetShouldReturn404NotFound() throws Exception {
-		String requestURI = END_POINT_PATH + "/ABCDEF";
+		String locationCode = "ABC_USA";
+		String requestURI = END_POINT_PATH + "/" + locationCode;
+		
+		LocationNotFoundException ex = new LocationNotFoundException(locationCode);
+		
+		Mockito.when(service.get(Mockito.any())).thenThrow(ex);
 		
 		mockMvc.perform(get(requestURI))
 			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.errors[0]", is(ex.getMessage())))
 			.andDo(print());
 	}
 	
@@ -240,12 +247,15 @@ public class LocationApiControllerTests {
 		location.setCountryName("Viet Nam");
 		location.setEnabled(true);
 		
-		Mockito.when(service.update(Mockito.any())).thenThrow(new LocationNotFoundException("No location found"));
+		LocationNotFoundException ex = new LocationNotFoundException(location.getCityName());
+		
+		Mockito.when(service.update(Mockito.any())).thenThrow(ex);
 		
 		String bodyContent = mapper.writeValueAsString(location);
 		
 		mockMvc.perform(put(END_POINT_PATH).contentType("application/json").content(bodyContent))
 			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.errors[0]", is(ex.getMessage())))
 			.andDo(print());
 	}
 	
@@ -302,10 +312,13 @@ public class LocationApiControllerTests {
 		String code = "NYC_USA";
 		String requestURI = END_POINT_PATH + "/" + code;
 		
-		Mockito.doThrow(LocationNotFoundException.class).when(service).delete(code);
+		LocationNotFoundException ex = new LocationNotFoundException(code);
+		
+		Mockito.doThrow(ex).when(service).delete(code);
 				
 		mockMvc.perform(delete(requestURI))
 				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.errors[0]", is(ex.getMessage())))
 				.andDo(print());		
 	}
 	
