@@ -2,78 +2,40 @@
 
 ## Overview
 
-Welcome to the **Weather Forecast APIs** documentation by SkyAPI Inc. This guide provides step-by-step instructions for using our APIs to manage locations, retrieve real-time weather data, and access hourly weather forecasts.
-
-**Base URL:** `http://localhost:8080`
-
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Getting Started](#getting-started)
-- [Endpoints](#endpoints)
-  - [Location Management](#location-management)
-  - [Realtime Weather](#realtime-weather)
-  - [Hourly Forecast](#hourly-forecast)
-- [Request/Response Formats](#requestresponse-formats)
-- [Error Handling](#error-handling)
-- [License](#license)
-- [Contact and Support](#contact-and-support)
+- **API Name**: Weather Forecast APIs by SkyAPI Inc.
+- **Version**: 1.0.0
+- **Purpose**: Manage weather forecast data, including locations, realtime weather, and hourly forecasts.
 
 ---
 
-## Features
+## Key Endpoints
 
-1. **Location Management**: Create, update, retrieve, and delete locations available for weather forecasts.
-2. **Realtime Weather**: Fetch and update real-time weather conditions for a specific location or the client’s location (based on IP).
-3. **Hourly Forecast**: Retrieve and update hourly weather forecasts for specific locations or the client’s current location.
+### **Location Management**
+
+1. **Get Locations**: Fetch all managed locations (`GET /v1/locations`).
+2. **Add Location**: Add a new location (`POST /v1/locations`).
+3. **Update Location**: Update details of an existing location (`PUT /v1/locations`).
+4. **Get Location by Code**: Retrieve details of a specific location (`GET /v1/locations/{code}`).
+5. **Delete Location**: Remove a location (`DELETE /v1/locations/{code}`).
+
+### **Realtime Weather**
+
+1. **Get Current Weather**: Fetch weather based on IP (`GET /v1/realtime`).
+2. **Get Weather by Code**: Retrieve weather for a specific location (`GET /v1/realtime/{code}`).
+3. **Update Realtime Weather**: Update weather data for a location (`PUT /v1/realtime/{code}`).
+
+### **Hourly Forecast**
+
+1. **Get Hourly Forecast**: Fetch hourly weather based on IP (`GET /v1/hourly`).
+2. **Get Hourly Forecast by Code**: Retrieve hourly weather for a location (`GET /v1/hourly/{code}`).
+3. **Update Hourly Forecast**: Update hourly forecast for a location (`PUT /v1/hourly/{code}`).
 
 ---
 
-## Getting Started
+## Key Features
 
-### Prerequisites
-
-- A running instance of the API server accessible at `http://localhost:8080`.
-- Familiarity with API testing tools such as `Postman`, `cURL`, or integration into a client application.
-
-### Usage Steps
-
-1. Set up the environment using the provided **Base URL**.
-2. Choose the desired API endpoint for your task (e.g., location management, weather retrieval).
-3. Make API requests using tools or code.
-4. Handle responses based on the HTTP status codes.
+- **Locations**: Manage global cities and regions for weather forecasts.
+- **Realtime Weather**: Access current weather data.
+- **Hourly Forecast**: Get or update detailed hourly weather predictions.
 
 ---
-
-## Endpoints
-
-### Location Management
-
-#### Get All Locations
-
-**`GET /v1/locations`**
-
-- Retrieve all managed locations for weather forecasts.
-- **Responses**:
-  - `200 OK`: An array of location objects.
-  - `204 No Content`: No locations found.
-
-#### Add a New Location
-
-**`POST /v1/locations`**
-
-- Add a new location for weather forecasting.
-- **Request Body**:
-  ```json
-  {
-    "code": "NYC_USA",
-    "city_name": "New York",
-    "region_name": "New York",
-    "country_name": "United States",
-    "country_code": "US",
-    "enable": true
-  }
-  ```

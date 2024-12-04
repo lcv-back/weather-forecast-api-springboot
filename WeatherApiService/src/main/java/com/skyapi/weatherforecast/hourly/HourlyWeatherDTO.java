@@ -5,9 +5,6 @@ import org.hibernate.validator.constraints.Range;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.skyapi.weatherforecast.common.HourlyWeather;
-
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 
 @JsonPropertyOrder({"hour_of_day", "temperature", "precipitation", "status"})
